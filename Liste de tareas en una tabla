@@ -1,0 +1,313 @@
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.table.DefaultTableModel;
+
+public class ventana extends JFrame {
+
+    private String[][] datosHorario = new String[13][8];
+    private DefaultTableModel modeloTabla;
+    private JTable tabla;
+
+    public ventana() {
+        setSize(800, 600);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setTitle("VENTANA PRINCIPAL");
+        setLocationRelativeTo(null);
+        setMinimumSize(new Dimension(400, 400));
+        getContentPane().setBackground(Color.YELLOW);
+        inicializarDatosHorario();
+        cargarHorario();
+        verificacion();
+        iniciarComponentes();
+    }
+
+    private void inicializarDatosHorario() {
+        for (int i = 0; i < datosHorario.length; i++) {
+            for (int j = 0; j < datosHorario[i].length; j++) {
+                datosHorario[i][j] = "";
+            }
+        }
+    }
+
+    public void iniciarComponentes() {
+        JPanel panel = new JPanel();
+        panel.setLayout(null);
+        getContentPane().add(panel);
+
+        JLabel etiqueta = new JLabel("BIENVENIDO ");
+        etiqueta.setBounds(150, 50, 200, 50);
+        etiqueta.setForeground(Color.RED);
+        etiqueta.setOpaque(true);
+        etiqueta.setBackground(Color.YELLOW);
+        etiqueta.setFont(new Font("cooper black", Font.PLAIN, 20));
+        panel.add(etiqueta);
+
+        JLabel etiqueta2 = new JLabel(new ImageIcon("imagen4.jpg"));
+        etiqueta2.setBounds(150, 100, 200, 200);
+        panel.add(etiqueta2);
+
+        JLabel etiqueta3 = new JLabel("USUARIO");
+        etiqueta3.setBounds(100, 350, 100, 20);
+        etiqueta3.setForeground(Color.RED);
+        etiqueta3.setOpaque(true);
+        etiqueta3.setBackground(Color.YELLOW);
+        etiqueta3.setFont(new Font("arial", Font.PLAIN, 12));
+        panel.add(etiqueta3);
+
+        JLabel etiqueta4 = new JLabel("CONTRASEÑA");
+        etiqueta4.setBounds(100, 380, 100, 20);
+        etiqueta4.setForeground(Color.RED);
+        etiqueta4.setOpaque(true);
+        etiqueta4.setBackground(Color.YELLOW);
+        etiqueta4.setFont(new Font("arial", Font.PLAIN, 12));
+        panel.add(etiqueta4);
+
+        JTextField cajaTexto = new JTextField();
+        cajaTexto.setBounds(200, 350, 200, 30);
+        cajaTexto.setForeground(Color.MAGENTA);
+        panel.add(cajaTexto);
+
+        JPasswordField caja2 = new JPasswordField();
+        caja2.setBounds(200, 380, 200, 30);
+        caja2.setForeground(Color.MAGENTA);
+        panel.add(caja2);
+
+        JButton boton1 = new JButton("ACEPTAR");
+        boton1.setBounds(100, 420, 100, 40);
+        boton1.setForeground(Color.MAGENTA);
+        boton1.setFont(new Font("cooper black", Font.PLAIN, 12));
+        panel.add(boton1);
+
+        JButton boton2 = new JButton("CANCELAR");
+        boton2.setBounds(300, 420, 100, 40);
+        boton2.setForeground(Color.MAGENTA);
+        boton2.setFont(new Font("cooper black", Font.PLAIN, 12));
+        panel.add(boton2);
+
+        boton1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String usuario = cajaTexto.getText();
+                String contraseña = new String(caja2.getPassword());
+
+                if (verificarCredenciales(usuario, contraseña)) {
+                    JOptionPane.showMessageDialog(null, "¡Bienvenido, " + usuario + "!");
+                    abrirHorario();
+                } else {
+                    JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrectos.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        boton2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                guardarHorario();
+                System.exit(0);
+            }
+        });
+    }
+
+    private boolean verificarCredenciales(String usuario, String contraseña) {
+        try (BufferedReader br = new BufferedReader(new FileReader("datos.txt"))) {
+            String linea;
+            while ((linea = br.readLine()) != null) {
+                String[] partes = linea.split(",");
+                if (partes[0].equals(usuario) && partes[1].equals(contraseña)) {
+                    return true;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private void guardarCredenciales(String usuario, String contraseña) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("datos.txt", true))) {
+            bw.write(usuario + "," + contraseña);
+            bw.newLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void verificacion() {
+        String usuario = "sandy";
+        String contraseña = "1904";
+
+        if (!verificarCredenciales(usuario, contraseña)) {
+            guardarCredenciales(usuario, contraseña);
+        }
+    }
+
+    public void abrirHorario() {
+        getContentPane().removeAll();
+        JPanel panel = new JPanel();
+        panel.setLayout(null);
+        getContentPane().add(panel);
+
+        JLabel etiqueta = new JLabel("HORARIO");
+        etiqueta.setBounds(300, 50, 200, 50);
+        etiqueta.setForeground(Color.RED);
+        etiqueta.setOpaque(true);
+        etiqueta.setBackground(Color.YELLOW);
+        etiqueta.setFont(new Font("cooper black", Font.PLAIN, 20));
+        panel.add(etiqueta);
+
+        String[] columnas = {"Hora", "Lunes", "Martes", "Miércoles", "Jueves",
+                "Viernes", "Sábado", "Domingo"};
+        modeloTabla = new DefaultTableModel(datosHorario, columnas);
+        tabla = new JTable(modeloTabla);
+        tabla.setRowHeight(30);
+        tabla.setFont(new Font("Arial", Font.PLAIN, 14));
+        tabla.setBackground(Color.CYAN);
+        JScrollPane scrollPane = new JScrollPane(tabla);
+        scrollPane.setBounds(50, 100, 700, 400);
+        panel.add(scrollPane);
+
+        for (int a = 0; a < 13; a++) {
+            datosHorario[a][0] = (a + 4) + ":00";
+        }
+
+        JButton guardar = new JButton("Guardar");
+        guardar.setBounds(80, 520, 100, 40);
+        guardar.setForeground(Color.MAGENTA);
+        guardar.setFont(new Font("cooper black", Font.PLAIN, 12));
+        panel.add(guardar);
+
+        JButton salir = new JButton("Salir");
+        salir.setBounds(220, 520, 100, 40);
+        salir.setForeground(Color.MAGENTA);
+        salir.setFont(new Font("cooper black", Font.PLAIN, 12));
+        panel.add(salir);
+
+        JButton hecho = new JButton("TAREA COMPLETADA");
+        hecho.setBounds(360, 520, 200, 40);
+        hecho.setForeground(Color.RED);
+        hecho.setFont(new Font("cooper black", Font.PLAIN, 12));
+        panel.add(hecho);
+
+        JButton eliminar = new JButton("ELIMINAR TAREA");
+        eliminar.setBounds(580, 520, 200, 40);
+        eliminar.setForeground(Color.RED);
+        eliminar.setFont(new Font("cooper black", Font.PLAIN, 12));
+        panel.add(eliminar);
+
+        hecho.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int filaSeleccionada = tabla.getSelectedRow();
+                if (filaSeleccionada != -1) {
+                    tabla.setValueAt("Completada", filaSeleccionada, tabla.getSelectedColumn());
+                } else {
+                    JOptionPane.showMessageDialog(null, "Por favor, seleccione una tarea para marcar como completada.");
+                }
+            }
+        });
+
+        eliminar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int filaSeleccionada = tabla.getSelectedRow();
+                if (filaSeleccionada != -1) {
+                    for (int i = 0; i < 8; i++) {
+                        tabla.setValueAt("", filaSeleccionada, i);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Por favor, seleccione una tarea para eliminar.");
+                }
+            }
+        });
+
+        guardar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                guardarHorario();
+            }
+        });
+
+        salir.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                guardarHorario();
+                System.exit(0);
+            }
+        });
+    }
+
+    public void guardarHorario() {
+        // Actualiza la matriz de datosHorario desde la tabla
+        for (int c = 0; c < 13; c++) {
+            for (int d = 1; d < 8; d++) {
+                Object valorCelda = tabla.getValueAt(c, d);
+                datosHorario[c][d] = valorCelda != null ? valorCelda.toString() : "";
+            }
+        }
+
+        // Encabezados de los días de la semana
+        String[] diasSemana = {"Hora", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"};
+
+        // Guardar en archivo
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("datosHorario.txt"))) {
+            // Escribir los encabezados
+            for (int i = 0; i < diasSemana.length; i++) {
+                writer.write(String.format("%-12s", diasSemana[i]));
+            }
+            writer.newLine();
+
+            // Escribir los datos
+            for (int i = 0; i < datosHorario.length; i++) {
+                writer.write(String.format("%-12s", datosHorario[i][0])); // Escribir la hora
+                for (int j = 1; j < datosHorario[i].length; j++) {
+                    writer.write(String.format("%-12s", datosHorario[i][j])); // Escribir las actividades
+                }
+                writer.newLine();
+            }
+            JOptionPane.showMessageDialog(null, "El Horario ha sido guardado con éxito");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void cargarHorario() {
+        try (BufferedReader reader = new BufferedReader(new FileReader("datosHorario.txt"))) {
+            String line = reader.readLine();
+            int row = 0;
+            while ((line = reader.readLine()) != null && row < datosHorario.length) {
+                String[] values = line.split(",");
+                for (int col = 0; col < values.length; col++) {
+                    datosHorario[row][col] = values[col];
+                }
+                row++;
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "No se pudieron cargar los datos del horario. Inicializando con datos vacíos.");
+            inicializarDatosHorario();
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new ventana().setVisible(true));
+    }
+}
