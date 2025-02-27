@@ -1,0 +1,27 @@
+import java.util.Scanner;
+
+public class CalcularTasaInteres {
+
+    public static double calcularTasaInteres(double P, double F, int n) {
+        double i = Math.pow(F / P, 1.0 / n) - 1;
+        return i;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Ingrese el monto inicial (P): ");
+        double montoInicial = scanner.nextDouble();
+
+        System.out.print("Ingrese el monto final (F): ");
+        double montoFinal = scanner.nextDouble();
+
+        System.out.print("Ingrese el número de períodos (n): ");
+        int numPeriodos = scanner.nextInt();
+
+        double tasaInteres = calcularTasaInteres(montoInicial, montoFinal, numPeriodos);
+        System.out.println("La tasa de interés es: " + tasaInteres);
+
+        scanner.close();
+    }
+}
