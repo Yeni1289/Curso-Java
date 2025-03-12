@@ -1,0 +1,22 @@
+
+    import javax.swing.JOptionPane;
+public class ciclo1 {
+    public static void main(String[] args) {
+        int valor;
+        int i = 10;
+        byte r=1;
+        
+       do{
+        valor = Integer.parseInt(JOptionPane.showInputDialog("ingresa el numero que deseas"));
+        int suma = valor;
+        for (i = 10 - 2; i >= 0; i -= 2) {
+            suma += i;
+            suma=suma*(i+1);
+            System.out.println("el resultado es " + suma);
+ 
+        } 
+        r = Byte.parseByte(JOptionPane.showInputDialog("selecciona 1 para reiniciar"));
+       } while (r==1);
+       
+    }
+}
